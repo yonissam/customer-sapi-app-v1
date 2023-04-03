@@ -1,0 +1,16 @@
+#%RAML 1.0 Library
+usage: Common Library
+
+traits:
+  common-header: !include trait/common-headers-trait.raml
+  data-header: !include trait/data-header-trait.raml
+  query-param: !include trait/common-queryparams-trait.raml
+  authorization-header: !include trait/authorization-header-trait.raml
+  common-error: !include trait/common-error-trait.raml
+
+types:
+  request-registration: !include datatype/request-registration-dataType.raml
+  request-registrationPapiSapi: !include datatype/request-registration-papi-spai-dataType.raml
+  response-registration: !include datatype/response-registration-dataType.raml
+  
+

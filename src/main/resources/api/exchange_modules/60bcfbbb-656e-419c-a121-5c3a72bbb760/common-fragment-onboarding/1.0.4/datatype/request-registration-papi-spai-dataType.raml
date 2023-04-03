@@ -1,0 +1,62 @@
+#%RAML 1.0 DataType
+
+type: object
+properties:
+  firstName:
+    required: true
+    type: string
+    example: "Developer"
+  lastName:
+    required: true
+    type: string
+    example: "Guide"
+  contactType:
+    required: true
+    type: string
+    example: "mobile"
+  countryCode:
+    required: true
+    type: string
+    example: "+91"
+  mobile:
+    required: true
+    type: string
+    example: "7647678765"
+  email:
+    required: true
+    type: string
+    example: "muletraining@abc.com"
+    pattern: ^.+@.+\..+$
+  password:
+    required: true
+    type: string
+    example: "sdkhjfd"
+  confirmPassword:
+    required: true
+    type: string
+    example: "sdkhjfd"
+  acceptDataPolicy:
+    required: true
+    type: boolean
+    example: true
+  recieveNews:
+    required: true
+    type: boolean
+    example: true
+  acceptPIC:
+    required: true
+    type: boolean
+    example: true
+  locale:
+    required: true
+    type: string
+    example: "en"
+  captchatoken:
+    required: true
+    type: string
+    example: "weu8iuehfew8fyiushdfsiuehfd8sed"
+  recieveClaimsettle:
+    required: true
+    type: boolean
+    example: true
+

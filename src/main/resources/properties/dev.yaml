@@ -1,0 +1,15 @@
+http:
+  listener:
+    port: "8081"
+    readtimeout: "30000"
+  
+  
+db:
+  host: "192.168.0.58"
+  port: "3306"
+  user: "root"
+  password: "![VpNkmCa8sTLFucLIMfcLkA==]"
+  database: "mulesoft"
+  connection:
+    frequency: "2000"
+    attempt: "2"

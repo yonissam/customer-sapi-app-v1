@@ -1,0 +1,18 @@
+{
+   "contact":{
+      "firstName":"Developer",
+      "lastName":"Guide",
+      "contactType":"mobile",
+      "countryCode":"+91",
+      "mobile":"7647678765",
+      "email":"yoni@abc.com"
+   },
+   "password":"sdkhjfd",
+   "confirmPassword":"sdkhjfd",
+   "acceptDataPolicy":true,
+   "recieveNews":true,
+   "acceptPIC":true,
+   "locale":"en",
+   "captchatoken":"weu8iuehfew8fyiushdfsiuehfd8sed",
+   "recieveClaimsettle":true
+}
