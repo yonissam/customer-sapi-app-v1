@@ -1,0 +1,13 @@
+http:
+  listener:
+    port: "8063"
+    readtimeout: "30000"
+  
+  
+sfdc:
+  username: "ysisay@icloud.com"
+  password: "![wcbiTjKPdy+v9X+eSdUFJw==]"
+  token: "![MBY2or/GNG7TSa6Dre8zKQgDWyAb9GqCJq3n427nKN8=]"
+  
+db:
+  password: "![VpNkmCa8sTLFucLIMfcLkA==]"

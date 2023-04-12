@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo" xmlns:batch="http://www.mulesoft.org/schema/mule/batch"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd">
+	<sub-flow name="batch-job" doc:id="cf111754-6737-4fdf-ba51-8006678bb1cc" >
+		<ee:transform doc:name="Transform Message" doc:id="ea2a1e3c-2c0a-4220-8168-a2539c596ef3">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<batch:job jobName="database-insert-implementationBatch_Job" doc:id="45a67ee8-3532-44f5-824d-c843c4cfbb33">
+			<batch:process-records>
+				<batch:step name="Batch_Step" doc:id="4d791533-dffc-4e5f-a0de-b21c0fd9295c">
+					<logger level="INFO" doc:name="Logger" doc:id="3e1a0908-14d1-4244-9611-aa529edbbf4a" message="start batch job" />
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="85535e43-7c5a-4ab9-bb7c-efe0d60b9b4f" size="20" preserveMimeTypes="true">
+						<mongo:insert-documents doc:name="Insert documents" doc:id="b7954648-f8f3-4bf8-a2a9-13f0ffb04e36" config-ref="MongoDB_Config" collectionName="customers">
+							<mongo:documents ><![CDATA[#[output application/json --- payload]]]></mongo:documents>
+						</mongo:insert-documents>
+					</batch:aggregator>
+				</batch:step>
+				<batch:step name="Batch_Step1" doc:id="c69df828-8c0c-4b1f-9c56-e4fcb02ba668" acceptPolicy="ONLY_FAILURES">
+					<logger level="INFO" doc:name="Logger" doc:id="f64e1262-26f0-4d1b-b645-97d0938bd2ae" message="start failed records batch step" />
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="3c8e566e-b149-4692-98e7-ad65d54943c9" size="20" preserveMimeTypes="true">
+						<mongo:insert-documents doc:name="Insert documents" doc:id="b70a41dc-5157-4faa-a5ad-286ffd16abcb" config-ref="MongoDB_Config" collectionName="deadletter">
+							<mongo:documents ><![CDATA[#[output application/json --- payload]]]></mongo:documents>
+						</mongo:insert-documents>
+					</batch:aggregator>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete>
+				<logger level="INFO" doc:name="Logger" doc:id="9b50bf8c-b6d4-4b4e-9c82-2e6c7681d7c3" message="#[output application/json --- payload]" />
+			</batch:on-complete>
+		</batch:job>
+	</sub-flow>
+	<flow name="database-insert-implementationFlow" doc:id="0165153f-89ca-4e98-9861-6b97ffb47299" >
+		<set-variable value='#[now() &gt;&gt; "UTC"]' doc:name="Set Variable" doc:id="f3ee41a0-9a42-4ffe-b68c-7f7366b75fc0" variableName="start" />
+		<logger level="INFO" doc:name="DB Insert Start Logger" doc:id="96a8c378-ec12-441a-8515-e23ce663cb99" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;process API&quot;,&#10;    DestinationApplication: &quot;Database&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Start database insert process&quot;&#10;}]" />
+		<flow-ref doc:name="Batch Job Flow Reference" doc:id="adac28ae-a527-4873-8dba-293a0968a303" name="batch-job" />
+		<ee:transform doc:name="Transform Message" doc:id="90f30a80-e683-4318-b121-576b74cb8771">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"customersResponse" : {
+		"eventInstanceId" : vars.requestData.headers.'x-vio-transactionid',
+		"status" : "success"
+}
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="DB Insert End Logger" doc:id="75b41cec-ac8a-499e-8152-4395872b6d56" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Database&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;End database insert process&quot;&#10;}]" />
+		<error-handler ref="global-errorError_Handler" />
+	</flow>
+</mule>

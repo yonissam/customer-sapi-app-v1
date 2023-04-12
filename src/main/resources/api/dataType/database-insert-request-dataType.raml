@@ -1,0 +1,64 @@
+#%RAML 1.0 DataType
+
+type: array
+items:
+  type: object
+  properties:
+    Name:
+      required: true
+      type: string
+      example: "Developer Guide"
+    firstName:
+      required: true
+      type: string
+      example: "Developer"
+    lastName:
+      required: true
+      type: string
+      example: "Guide"
+    contactType:
+      required: true
+      type: string
+      example: "mobile"
+    countryCode:
+      required: true
+      type: string
+      example: "+91"
+    mobile:
+      required: true
+      type: string
+      example: "7647678765"
+    email:
+      required: true
+      type: string
+      example: "muletraining@abc.com"
+      pattern: ^.+@.+\..+$
+    password:
+      required: true
+      type: string
+      example: "sdkhjfd"
+    acceptDataPolicy:
+      required: true
+      type: string
+      example: "true"
+    recieveNews:
+      required: true
+      type: string
+      example: "true"
+    acceptPIC:
+      required: true
+      type: string
+      example: "true"
+    locale:
+      required: true
+      type: string
+      example: "en"
+    captchatoken:
+      required: true
+      type: string
+      example: "weu8iuehfew8fyiushdfsiuehfd8sed"
+    recieveClaimsettle:
+      required: true
+      type: string
+      example: "true"
+example: !include ../example/database-insert-request-example.json

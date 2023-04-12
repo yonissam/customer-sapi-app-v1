@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="data-insert-salesforce-db" doc:id="e1fae87c-87db-465c-8835-50082d27beac" >
+		<scatter-gather doc:name="Scatter-Gather" doc:id="b863e846-2d7d-4c4d-b324-e30a2f8fc853">
+			<route>
+				<logger level="INFO" doc:name="SFDC Request Logger" doc:id="0914120c-3a63-4fa4-9606-bbbc93c36d47" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request SFDC&quot;&#10;}]" />
+				<salesforce:create type="CustomerONB__c" doc:name="Create" doc:id="c3bd53ec-8fa8-4bcb-a7c8-8894f88d4a23" config-ref="Salesforce_Config">
+				</salesforce:create>
+				<logger level="INFO" doc:name="SFDC Response Logger" doc:id="a62e53de-35ac-463e-ab70-3cb73ef2477f" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;ResponseSFDC&quot;&#10;}]" />
+			</route>
+			<route>
+				<logger level="INFO" doc:name="DB Start Logger" doc:id="0249bc38-859c-4d78-92c2-59fc71033544" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Mongo Database&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request Mongo DB&quot;&#10;}]" />
+				<db:insert doc:name="Insert into DB" doc:id="baa9f310-2b30-433e-a93f-934470c92db8" config-ref="Database_Config">
+					<db:sql><![CDATA[INSERT INTO customers (Name, firstName__c, lastName__c, contactType__c, countryCode__c, mobile__c, email__c, password__c, acceptDataPolicy__c, recieveNews__c, acceptPIC__c, locale__c, captchatoken__c, recieveClaimsettle__c)
+VALUES (:Name, :firstName__c, :lastName__c, :contactType__c, :countryCode__c, :mobile__c, :email__c, :password__c, :acceptDataPolicy__c, :recieveNews__c, :acceptPIC__c, :locale__c, :captchatoken__c, :recieveClaimsettle__c)]]></db:sql>
+					<db:input-parameters><![CDATA[#[payload[0]]]]></db:input-parameters>
+				</db:insert>
+				<logger level="INFO" doc:name="DB End Logger" doc:id="14f88475-d902-4a2d-b3ca-8780c373ba4b" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Mongo Database&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Response Mongo DB&quot;&#10;}]" />
+			</route>
+		</scatter-gather>
+	</sub-flow>
+	<flow name="registration-implementationFlow" doc:id="f41345cd-23bb-4eba-bdc4-3bcc19f96231" >
+		<ee:transform doc:name="Transform Message" doc:id="a074b9bf-924a-40e4-ac13-cd3ab0258a51">
+			<ee:message>
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+import java!com::yoni::Hash
+---
+[
+{
+	Name: vars.requestData.payload.contact.firstName ++ " " ++ vars.requestData.payload.contact.lastName,
+	firstName__c: vars.requestData.payload.contact.firstName,
+	lastName__c: vars.requestData.payload.contact.lastName,
+	contactType__c: vars.requestData.payload.contact.contactType,
+	countryCode__c: vars.requestData.payload.contact.countryCode,
+	mobile__c: vars.requestData.payload.contact.mobile,
+	email__c: vars.requestData.payload.contact.email,
+	password__c: Hash::hashPassword(vars.requestData.payload.password),
+	acceptDataPolicy__c: vars.requestData.payload.acceptDataPolicy as String,
+	recieveNews__c: vars.requestData.payload.recieveNews as String,
+	acceptPIC__c: vars.requestData.payload.acceptPIC as String,
+	locale__c: vars.requestData.payload.locale,
+	captchatoken__c: vars.requestData.payload.captchatoken,
+	recieveClaimsettle__c: vars.requestData.payload.recieveClaimsettle as String
+}
+]
+]]></ee:set-payload>
+			</ee:message>
+			<ee:variables>
+				<ee:set-variable variableName="start" ><![CDATA[now() >> "UTC"]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Registration Start Logger" doc:id="7006b4dc-a0f9-47b3-b902-e3ec42635392" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;START&quot;&#10;}]"/>
+		<flow-ref doc:name="Data Insert Salesforce DB Flow Reference" doc:id="ea23745b-025d-4745-8c79-2ba89b752952" name="data-insert-salesforce-db" />
+		<logger level="INFO" doc:name="Registration End Logger" doc:id="ee398f7b-43a5-4592-b9f4-af1d373c7499" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Registration SFDC and Database&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Response SMTP&quot;&#10;}]" />
+		<ee:transform doc:name="Transform Message" doc:id="e4c35bbd-81c5-4f30-a0a0-19690c88abad" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"customersResponse" : {
+		"eventInstanceId" : vars.requestData.headers.'x-vio-transactionid',
+		"status" : "success"
+}
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+	</flow>
+</mule>

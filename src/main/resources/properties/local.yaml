@@ -1,0 +1,21 @@
+http:
+  port: "8081"
+  
+db:
+  host: "66.228.35.64"
+  port: "3306"
+  user: "root"
+  password: "![VpNkmCa8sTLFucLIMfcLkA==]"
+  database: "mulesoft"
+  connection:
+    frequency: "2000"
+    attempt: "2"
+paymentGateway:
+  checkout:
+    host: "checkoutgateway3rdparty-malug5.5sc6y6-2.usa-e2.cloudhub.io"
+    port: ""
+    endpoint: "/checkout"
+exchange:
+  URL: "https://api.apilayer.com/exchangerates_data/latest"
+  apikey: "![mhW8Kht43M5cC5T9fVjqa6yeSeV0LFTtH9SWrZmn1CB3nlujYmCs2Wc2hBoMjyf1]"
+  

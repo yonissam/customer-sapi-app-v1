@@ -1,0 +1,76 @@
+#%RAML 1.0 DataType
+
+type: array
+items:
+  type: object
+  properties:
+    Name:
+      required: false
+      type: string
+      example: "Ericka Hudson"
+    Id:
+      required: false
+      type: string
+      example: "a013t00001NOWz3AAH"
+    Id__c:
+      required: false
+      type: string
+      example: "31"
+    type:
+      required: false
+      type: string
+      example: "CustomerONB__c"
+    firstName__c:
+      required: true
+      type: string
+      example: "Developer"
+    lastName__c:
+      required: true
+      type: string
+      example: "Guide"
+    contactType__c:
+      required: true
+      type: string
+      example: "mobile"
+    countryCode__c:
+      required: true
+      type: string
+      example: "+91"
+    mobile__c:
+      required: true
+      type: string
+      example: "7647678765"
+    email__c:
+      required: true
+      type: string
+      example: "muletraining@abc.com"
+      pattern: ^.+@.+\..+$
+    password__c:
+      required: true
+      type: string
+      example: "sdkhjfd"
+    acceptDataPolicy__c:
+      required: true
+      type: string
+      example: "true"
+    recieveNews__c:
+      required: true
+      type: string
+      example: "true"
+    acceptPIC__c:
+      required: true
+      type: string
+      example: "true"
+    locale__c:
+      required: true
+      type: string
+      example: "en"
+    captchatoken__c:
+      required: true
+      type: string
+      example: "weu8iuehfew8fyiushdfsiuehfd8sed"
+    recieveClaimsettle__c:
+      required: true
+      type: string
+      example: "true"
+example: !include ../example/customer-data-response-example.json

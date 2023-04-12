@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:validation="http://www.mulesoft.org/schema/mule/validation"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/validation http://www.mulesoft.org/schema/mule/validation/current/mule-validation.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd">
+	<flow name="verify-implementationFlow" doc:id="d23a5a76-5b89-422e-b5a5-1328b80991b6" >
+		<set-variable value='#[now() &gt;&gt; "UTC"]' doc:name="Set Variable" doc:id="7ba6b02b-ddcc-4829-ba5c-b528126bcb97" variableName="start" />
+		<logger level="INFO" doc:name="Request SFDC Logger" doc:id="f63ffc88-4aed-441b-b869-3d7f9a836e09" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request salesforce&quot;&#10;}]" />
+		<salesforce:query doc:name="Query" doc:id="3429aeaf-7200-4b38-a5e3-7f7245113383" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[SELECT firstName__c, lastName__c, contactType__c, countryCode__c, mobile__c, acceptDataPolicy__c, recieveNews__c, acceptPIC__c, 	locale__c, captchatoken__c, recieveClaimsettle__c  
+FROM CustomerONB__c 
+WHERE email__c = ':email']]></salesforce:salesforce-query>
+			<salesforce:parameters><![CDATA[#[{
+	email: payload.email
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<logger level="INFO" doc:name="Response SFDC Logger" doc:id="2b942bdf-abc9-4148-a28b-8371a36f694a" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Response salesforce&quot;&#10;}]" />
+		<ee:transform doc:name="Transform Message" doc:id="7c00e018-082b-4415-ab69-93b3b00fb9fa" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"firstName": payload[0].firstName__c,
+	"lastName": payload[0].lastName__c,
+	"contactType": payload[0].contactType__c,
+	"countryCode": payload[0].countryCode__c,
+	"mobile": payload[0].mobile__c,
+  	"acceptDataPolicy": payload[0].acceptDataPolicy__c,
+  	"recieveNews": payload[0].recieveNews__c,
+  	"acceptPIC": payload[0].acceptPIC__c,
+  	"locale": payload[0].locale__c,
+ 	"captchatoken": payload[0].captchatoken__c,
+	"recieveClaimsettle": payload[0].recieveClaimsettle__c
+}
+
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler ref="global-errorError_Handler" />
+	</flow>
+</mule>
