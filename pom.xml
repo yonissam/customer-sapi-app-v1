@@ -31,7 +31,7 @@
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
-				<armDeployment>
+					<armDeployment>
 						<muleVersion>4.4.0</muleVersion>
 						<uri>https://anypoint.mulesoft.com</uri>
 						<target>server-3</target>
@@ -117,7 +117,6 @@
 			<artifactId>mongodb-driver-legacy</artifactId>
 			<version>4.0.4</version>
 		</dependency>
-		
 		<dependency>
 			<groupId>org.mule.connectors</groupId>
 			<artifactId>mule-email-connector</artifactId>
@@ -148,7 +147,6 @@
 			<version>6.3.7</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
-		
 		<dependency>
 			<groupId>com.mulesoft.connectors</groupId>
 			<artifactId>mule-salesforce-connector</artifactId>
@@ -174,6 +172,11 @@
 			<artifactId>assertions</artifactId>
 			<version>1.0.2</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mycompany</groupId>
+			<artifactId>postgresql-42.6.0</artifactId>
+			<version>0.1</version>
 		</dependency>
 	</dependencies>
 
