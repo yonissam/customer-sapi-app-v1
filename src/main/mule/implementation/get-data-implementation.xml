@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="get-data-implementationFlow" doc:id="abb8b805-07f9-4fe0-96c6-27acb297ddf4" >
+		<set-variable value='#[now() &gt;&gt; "UTC"]' doc:name="Set Variable" doc:id="317cc0fe-f72a-402b-b384-a8849eeb07bf" variableName="start" />
+		<logger level="INFO" doc:name="Request SFDC Logger" doc:id="60a17380-78f6-44ca-a8e7-2128decbf204" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request salesforce&quot;&#10;}]" />
+		<ee:transform doc:name="Transform Message" doc:id="a1e029db-8797-4ecb-98c2-a9ec070dfacc">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+var flag = if((!isEmpty(vars.requestData.queryParams.email)) or (!isEmpty(vars.requestData.queryParams.mobile)) or 
+(!isEmpty(vars.requestData.queryParams.toDate)) or (!isEmpty(vars.requestData.queryParams.fromDate))) true else false
+---
+
+("SELECT  ID__c, Id, LastModifiedDate, acceptDataPolicy__c, acceptPIC__c, captchatoken__c, contactType__c, countryCode__c, 
+email__c, firstName__c, lastName__c, locale__c, mobile__c, Name, password__c, recieveClaimsettle__c, recieveNews__c
+FROM CustomerONB__c" ++ 
+(if(flag) " where" else "") ++
+(if((!isEmpty(vars.requestData.queryParams.email))) (" and email__c = '$(vars.requestData.queryParams.email)'") else ("")) ++ 
+(if((!isEmpty(vars.requestData.queryParams.mobile))) (" and mobile__c = '$(vars.requestData.queryParams.mobile)'") else ("")) ++ 
+(if((!isEmpty(vars.requestData.queryParams.toDate))) (" and LastModifiedDate <= $(vars.requestData.queryParams.toDate)+0000" ) else ("")) ++
+(if((!isEmpty(vars.requestData.queryParams.fromDate))) (" and LastModifiedDate > $(vars.requestData.queryParams.fromDate)+0000" ) else (""))) 
+replace("where and") with "where"]]></ee:set-payload>
+			</ee:message>
+			<ee:variables />
+		</ee:transform>
+		<salesforce:query doc:name="Query" doc:id="ed95dea4-6053-406c-9338-de78ec8d54f9" config-ref="Salesforce_Config">
+			<salesforce:salesforce-query><![CDATA[#[payload]]]></salesforce:salesforce-query>
+		</salesforce:query>
+		<ee:transform doc:name="Transform Message" doc:id="32e257df-be71-4245-a8af-f3c395baec8f">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Response SFDC Logger" doc:id="1962c84a-7430-4871-bc55-b9c0cfd21b77" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Response salesforce&quot;&#10;}]" />
+		<error-handler ref="global-errorError_Handler" />
+	</flow>
+</mule>

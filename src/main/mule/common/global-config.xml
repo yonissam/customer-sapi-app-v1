@@ -1,18 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<mule xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit"
-	xmlns:http="http://www.mulesoft.org/schema/mule/http"
-	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="
+<mule xmlns:api-gateway="http://www.mulesoft.org/schema/mule/api-gateway"
+	xmlns:os="http://www.mulesoft.org/schema/mule/os"
+	xmlns:email="http://www.mulesoft.org/schema/mule/email" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns:mongo="http://www.mulesoft.org/schema/mule/mongo"
+	xmlns:secure-properties="http://www.mulesoft.org/schema/mule/secure-properties" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce" xmlns:apikit="http://www.mulesoft.org/schema/mule/mule-apikit" xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
 http://www.mulesoft.org/schema/mule/mule-apikit http://www.mulesoft.org/schema/mule/mule-apikit/current/mule-apikit.xsd 
-http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd">
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/secure-properties http://www.mulesoft.org/schema/mule/secure-properties/current/mule-secure-properties.xsd
+http://www.mulesoft.org/schema/mule/mongo http://www.mulesoft.org/schema/mule/mongo/current/mule-mongo.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd
+http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
+http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/mule/api-gateway/current/mule-api-gateway.xsd">
 	
 	 <http:listener-config name="registration-sapi-httpListenerConfig">
         <http:listener-connection host="0.0.0.0" port="${http.listener.port}" readTimeout="${http.listener.readtimeout}"/>
-    </http:listener-config>
-    <apikit:config name="registration-sapi-config" api="registration-sapi.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
+    
+</http:listener-config>
+    <apikit:config name="api-config" api="api\api.raml" outboundHeadersMapName="outboundHeaders" httpStatusVarName="httpStatus" />
 	<configuration doc:name="Configuration" doc:id="009ba4e7-52fb-4dfb-a11a-b9e3414ac173" defaultErrorHandler-ref="global-errorError_Handler" />
-	<configuration-properties doc:name="Configuration properties" doc:id="0e460035-0c2d-4751-921f-1d9dac1736f8" file="${mule.env}.yaml" />
+	<configuration-properties doc:name="Configuration properties" doc:id="0e460035-0c2d-4751-921f-1d9dac1736f8" file="properties/${mule.env}.yaml" />
+	<salesforce:sfdc-config name="Salesforce_Config" doc:name="Salesforce Config" doc:id="59d539d5-9489-44c7-83a6-326a484eed73" >
+		<salesforce:basic-connection username="${secure::sfdc.username}" password="${secure::sfdc.password}" securityToken="${secure::sfdc.token}" />
+	</salesforce:sfdc-config>
+	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="2961be16-1386-4384-9f25-1576102c9ede" file="properties/${mule.env}.yaml" key="${mule.secretKey}" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="e6f9cd12-41be-4c55-a49c-953d6f30b5af" >
+		<db:generic-connection url="jdbc:postgresql://192.168.0.58:5432/Customers" driverClassName="org.postgresql.Driver" user="postgres" password="${secure::db.password}" />
+	</db:config>
+	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="c95e5556-3eb8-4c08-8ded-e4c9fdaa781a" >
+		<email:smtp-connection host="192.168.0.136" port="2525" />
+	</email:smtp-config>
+	<os:config name="ObjectStore_Config" doc:name="ObjectStore Config" doc:id="9fd23c40-466b-4065-a83a-efcdc554179a" >
+		<os:connection />
+	</os:config>
+	<os:object-store name="Object_store" doc:name="Object store" doc:id="0a6bf04c-de22-4d19-8ebe-e53ed88b87bb" entryTtl="2" entryTtlUnit="MINUTES" />
+	<mongo:config name="MongoDB_Config" doc:name="MongoDB Config" doc:id="8fddfb4f-34d0-4ad6-b51c-7bbff017fda0" >
+		<mongo:connection-string-connection connectionString="mongodb://root:example@192.168.0.136:27017/admin"/>
+	</mongo:config>
+	<api-gateway:autodiscovery apiId="18622546" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="ad83ee3c-e680-490a-9b55-a30d207b21f2" flowRef="api-main" />
+	
     
 </mule>

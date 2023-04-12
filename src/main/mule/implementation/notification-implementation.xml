@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:email="http://www.mulesoft.org/schema/mule/email"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="
+http://www.mulesoft.org/schema/mule/email http://www.mulesoft.org/schema/mule/email/current/mule-email.xsd 
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<flow name="notification-implementationFlow" doc:id="3e995259-d75f-46be-8618-e7292350904e" >
+		<set-variable value='#[now() &gt;&gt; "UTC"]' doc:name="Strat Time Set Variable" doc:id="6070dc50-5844-43ec-9356-859b466ff423" variableName="start" />
+		<logger level="INFO" doc:name="SMTP Start Logger" doc:id="78d50df0-b577-42c2-a2dc-bdfd1df339b7" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: vars.startTime,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Notification SMTP API&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request SMTP&quot;&#10;}]"/>
+		<email:send doc:name="Send Email Notification" doc:id="395d49e7-60ba-468f-baee-57f4d02d0ae9" config-ref="Email_SMTP" fromAddress="notifications@vio.com" subject="Account Creation Confirmation From VIO App">
+			<email:to-addresses >
+				<email:to-address value="#[vars.requestData.payload.email]" />
+			</email:to-addresses>
+			<email:body contentType="text/html" >
+				<email:content ><![CDATA[#["<h1> Welcome to the VIO Community </h1>
+<h2> Hello $(vars.requestData.payload.firstName)! </h2>
+<p1> Your account was successfully created with Username: $(vars.requestData.payload.email) </p1>"]]]></email:content>
+			</email:body>
+		</email:send>
+		<logger level="INFO" doc:name="SMTP End Logger" doc:id="4efea4a8-55ac-4e9b-b167-10a770b41898" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Notification SMTP API&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Response SMTP&quot;&#10;}]"/>
+		<ee:transform doc:name="Transform Message" doc:id="d9400b16-f7a4-4647-b026-adf834ae845d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"customersResponse" : {
+		"eventInstanceId" : vars.requestData.headers.'x-vio-transactionid',
+		"status" : "success"
+}
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler ref="global-errorError_Handler" />
+		
+	</flow>
+</mule>

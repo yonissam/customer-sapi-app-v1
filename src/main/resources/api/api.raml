@@ -1,0 +1,142 @@
+#%RAML 1.0
+title: customer-sapi-raml
+description: This RAML file will contain resources for customer system API
+baseUri: http://localhost:8083/api
+version: v1
+
+uses:
+  common-library: exchange_modules/60bcfbbb-656e-419c-a121-5c3a72bbb760/common-fragment-onboarding/1.0.9/common-fragment-onboarding.raml
+
+
+/customers:
+  /registration:
+    description: This API will help register customer on Vio APP. This API will help to Automate onboarding process
+    post:
+      is: [common-library.common-header, common-library.data-header, common-library.common-error]
+      body:
+        application/json:
+          type: common-library.request-registration
+      responses:
+        200:
+          body:
+            application/json:
+              type: common-library.response-registration
+  /login:
+    post:
+      description: This API will help login customer on Vio APP. 
+      is: [common-library.common-header, common-library.data-header, common-library.common-error]
+      body:
+        application/json:
+          type: !include dataType/login-request-dataType.raml
+      responses:
+        200:
+          body:
+            application/json:
+              type: common-library.response-registration
+  /verify:
+    post:
+      description: This API will verify Customer Login OTP. 
+      is: [common-library.common-header, common-library.data-header, common-library.common-error]
+      body:
+        application/json:
+          type: common-library.verify-request
+      responses:
+        200:
+          body:
+            application/json:
+              type: common-library.verify-response
+  /reset:
+    post:
+      description: This API will help verify user to reset password. 
+      is: [common-library.common-header, common-library.data-header, common-library.common-error]
+      body:
+        application/json:
+          type: common-library.reset-request
+      responses:
+        200:
+          body:
+            application/json:
+              type: common-library.reset-response
+    /password:
+      put:
+        description: This API will reset user password. 
+        is: [common-library.common-header, common-library.data-header, common-library.common-error]
+        body:
+          application/json:
+            type: common-library.password-reset-request
+        responses:
+          200:
+            body:
+              application/json:
+                type: common-library.password-reset-response
+  /delete:
+    delete:
+      description: This API will delete user account. 
+      is: [common-library.common-header, common-library.data-header, common-library.common-error]
+      body:
+        application/json:
+          type: common-library.delete-request
+      responses:
+        200:
+          body:
+            application/json:
+              type: common-library.delete-response
+  /data:
+    get:
+      description: This API will get all customer data from SFDC. 
+      is: [common-library.common-header, common-library.data-header, common-library.common-error]
+      queryParameters:
+        email?:
+          type: string
+          example: "yoni@abc.com"
+          pattern: ^.+@.+\..+$
+        mobile?:
+          type: string
+          example: "9703414499"
+        fromDate?: 
+          type: datetime-only
+          example: 2023-04-08T16:58:53
+        toDate?: 
+          type: datetime-only
+          example: 2023-04-08T16:58:53
+      responses:
+        200:
+          body:
+            application/json:
+              type: !include dataType/customer-data-response-dataType.raml
+  /database:
+    description: This API will save all customer data into database.
+    post:
+      is: [common-library.common-header, common-library.data-header, common-library.common-error]
+      body:
+        application/json:
+          type: !include dataType/database-insert-request-dataType.raml
+      responses:
+        200:
+          body:
+            application/json:
+              type: common-library.response-registration
+
+/notifications:
+  post:
+    description: This API will send email notification to user.
+    is: [common-library.common-header, common-library.data-header, common-library.common-error]
+    body:
+      application/json:
+        type: !include dataType/notification-dataType.raml
+    responses:
+      200:
+        body:
+          application/json:
+            type: common-library.response-registration
+
+/ping:
+  get:
+    description: This API will help check if application is running or not.
+    is: [common-library.common-header, common-library.common-error]
+    responses:
+      200:
+        body:
+          application/json:
+            type: !include dataType/health-check-dataType.raml
+

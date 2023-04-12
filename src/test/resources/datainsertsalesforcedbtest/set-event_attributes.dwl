@@ -1,0 +1,31 @@
+{
+  "headers": {
+    "x-vio-transactionid": "dbfhjsdb-hfb-do8ryt-876utt7-5ty364ol",
+    "clientid": "hsdfgysdhfcdshf37er6twgsdhfjcd",
+    "clientsecret": "dsgfhaegur457r6ewsewegrfjesh",
+    "content-type": "application/json",
+    "accept": "application/json",
+    "user-agent": "PostmanRuntime/7.31.3",
+    "postman-token": "1f577823-01c8-46bc-aae8-24124cedb31a",
+    "host": "localhost:8083",
+    "accept-encoding": "gzip, deflate, br",
+    "connection": "keep-alive",
+    "content-length": "430"
+  },
+  "clientCertificate": null,
+  "method": "POST",
+  "scheme": "http",
+  "queryParams": {},
+  "requestUri": "/api/customers/registration",
+  "queryString": "",
+  "version": "HTTP/1.1",
+  "maskedRequestPath": "/customers/registration",
+  "listenerPath": "/api/*",
+  "localAddress": "/127.0.0.1:8083",
+  "relativePath": "/api/customers/registration",
+  "uriParams": {},
+  "rawRequestUri": "/api/customers/registration",
+  "rawRequestPath": "/api/customers/registration",
+  "remoteAddress": "/127.0.0.1:53426",
+  "requestPath": "/api/customers/registration"
+}

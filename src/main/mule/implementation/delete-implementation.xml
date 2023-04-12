@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<sub-flow name="delete-account-subflow" doc:id="d0eced7f-5d0b-4817-8e7c-453bb1089152">
+		<scatter-gather doc:name="Scatter-Gather" doc:id="93d5ea47-a0c4-4242-a7a2-553930b9e159">
+			<route>
+				<logger level="INFO" doc:name="SFDC Request Logger" doc:id="35671821-8c68-4937-8fde-05befb5f6351" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request SFDC&quot;&#10;}]" />
+				<salesforce:query doc:name="Query" doc:id="c2826377-3480-4948-8ca9-334d5e142810" config-ref="Salesforce_Config" target="deleteId">
+					<salesforce:salesforce-query><![CDATA[SELECT password__c, email__c, Id
+FROM CustomerONB__c 
+WHERE password__c= ':password' AND email__c = ':email']]></salesforce:salesforce-query>
+					<salesforce:parameters><![CDATA[#[{
+	email: payload.email,
+	password : payload.password
+}]]]></salesforce:parameters>
+				</salesforce:query>
+				<salesforce:delete doc:name="Delete" doc:id="2b70d5cc-9706-47a0-a336-df65a86f4939" config-ref="Salesforce_Config">
+					<salesforce:ids><![CDATA[#[vars.deleteId.Id]]]></salesforce:ids>
+				</salesforce:delete>
+				<logger level="INFO" doc:name="SFDC Response Logger" doc:id="9de7bf5a-f7c3-48bf-98dd-ba386421a34b" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;ResponseSFDC&quot;&#10;}]" />
+			</route>
+			<route>
+				<logger level="INFO" doc:name="DB Start Logger" doc:id="6009ba70-4268-4e75-b2fa-83c0b6c0a9fe" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Database&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request DB&quot;&#10;}]" />
+				<db:delete doc:name="Delete" doc:id="b60d49c2-4aa1-4737-b204-f873c50b7492" config-ref="Database_Config">
+					<db:sql><![CDATA[DELETE FROM customers
+WHERE email__c = :email]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	email : payload.email
+}]]]></db:input-parameters>
+				</db:delete>
+				<logger level="INFO" doc:name="DB End Logger" doc:id="df509ae4-9ec2-40c8-b1d2-6c7e515dd669" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Database&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Response DB&quot;&#10;}]" />
+			</route>
+		</scatter-gather>
+	</sub-flow>
+	<flow name="delete-implementationFlow" doc:id="bd0887fc-3a40-4160-a119-d2445e17e0eb" >
+		<logger level="INFO" doc:name="Delete User Start Logger" doc:id="852781f6-ad28-45cc-b62f-6081d5fc0e90" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Delete process&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;START delete process&quot;&#10;}]" />
+		<set-variable value='#[now() &gt;&gt; "UTC"]' doc:name="Set Variable" doc:id="6c70a7cb-8f88-4484-ac14-d4093be9d8f7" variableName="start" />
+		<ee:transform doc:name="Transform Message" doc:id="447ce260-aeae-4b78-b2e4-fd153c5d2547" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+import java!com::yoni::Hash
+---
+{
+	email: vars.requestData.payload.email,
+	password: Hash::hashPassword(vars.requestData.payload.password)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Delete Account Flow Reference" doc:id="824ead3f-6970-422f-a37b-363cc6bfc5c2" name="delete-account-subflow"/>
+		<ee:transform doc:name="Transform Message" doc:id="563da6e2-714c-447d-96d6-730d74c528bf">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"customersResponse" : {
+		"eventInstanceId" : vars.requestData.headers.'x-vio-transactionid',
+		"status" : "success"
+}
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Delete User End Logger" doc:id="4eba25bf-2b89-42b4-bb23-bfd59af10612" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Delete process&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;END delete process&quot;&#10;}]" />
+		<error-handler ref="global-errorError_Handler" />
+	</flow>
+</mule>

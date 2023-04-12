@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:db="http://www.mulesoft.org/schema/mule/db" xmlns:salesforce="http://www.mulesoft.org/schema/mule/salesforce"
+	xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/salesforce http://www.mulesoft.org/schema/mule/salesforce/current/mule-salesforce.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd">
+	<flow name="reset-implementationFlow" doc:id="db0308d0-6d06-4d21-a057-608c79bf1c5a">
+		<set-variable value='#[now() &gt;&gt; "UTC"]' doc:name="Set Variable" doc:id="04fe068e-437b-4b5d-b22b-36bbdbb5af2f" variableName="start" />
+		<logger level="INFO" doc:name="SFDC Request Logger" doc:id="ee4c4d74-743a-4735-bb4a-77f72eeef6b7" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request salesforce&quot;&#10;}]" />
+		<salesforce:query doc:name="Query" doc:id="b0b9f9ce-cf25-4709-bac3-9786bcbe70a6" config-ref="Salesforce_Config" target="id">
+			<salesforce:salesforce-query><![CDATA[SELECT email__c
+FROM CustomerONB__c 
+WHERE email__c = ':email']]></salesforce:salesforce-query>
+			<salesforce:parameters><![CDATA[#[{
+	email: vars.requestData.payload.email
+}]]]></salesforce:parameters>
+		</salesforce:query>
+		<logger level="INFO" doc:name="SFDC Response Logger" doc:id="70115a89-4347-4836-8709-66692a786949" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Response salesforce&quot;&#10;}]" />
+		<ee:transform doc:name="Transform Message" doc:id="11943999-296d-4fed-87da-0494feafd704">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	email: (vars.id)[0].email__c
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<error-handler ref="global-errorError_Handler" />
+	</flow>
+	<sub-flow name="password-reset-subflow" doc:id="6484992e-0668-45f5-9bb4-5cf1321d089c" >
+		<scatter-gather doc:name="Scatter-Gather" doc:id="e7a3060d-1b41-4155-8d07-e0552c873682">
+			<route>
+				<logger level="INFO" doc:name="SFDC Request Logger" doc:id="70c183e6-9aec-418f-b491-5c223d0f62ef" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request SFDC&quot;&#10;}]" />
+				<salesforce:query doc:name="Query" doc:id="edb5cac4-c3da-47ec-a410-2c75843a53e9" config-ref="Salesforce_Config" target="passwordId">
+					<salesforce:salesforce-query><![CDATA[SELECT email__c, Id
+FROM CustomerONB__c 
+WHERE email__c = ':email']]></salesforce:salesforce-query>
+					<salesforce:parameters><![CDATA[#[{
+	email: payload.email
+}]]]></salesforce:parameters>
+				</salesforce:query>
+				<ee:transform doc:name="Transform Message" doc:id="8af5ad52-08b6-41a9-b2d0-b90b530fd50c" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+[{
+	"Id": (vars.passwordId)[0].Id,
+	"password__c": payload.password
+}]
+]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+				<salesforce:update doc:name="Update" doc:id="8b141075-0655-4101-9033-3d99496c8959" config-ref="Salesforce_Config" type="CustomerONB__c">
+				</salesforce:update>
+				<logger level="INFO" doc:name="SFDC Response Logger" doc:id="25b3868b-fac5-4df6-8026-b71220241518" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Salesforce&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;ResponseSFDC&quot;&#10;}]" />
+			</route>
+			<route>
+				<logger level="INFO" doc:name="DB Start Logger" doc:id="c6b42b29-a9cd-41f1-b5fd-02246ced460c" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Database&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Request DB&quot;&#10;}]" />
+				<db:update doc:name="Update" doc:id="7e4c0969-b911-4dbe-9dda-38be9a162b46" config-ref="Database_Config">
+					<db:sql><![CDATA[UPDATE customers
+SET password__c = :password
+WHERE email__c = :email]]></db:sql>
+					<db:input-parameters><![CDATA[#[{
+	email : payload.email,
+	password : payload.password
+}]]]></db:input-parameters>
+				</db:update>
+				<logger level="INFO" doc:name="DB End Logger" doc:id="81eb44d5-d21d-4f0e-8666-0001e9d0f458" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Database&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;Response DB&quot;&#10;}]" />
+			</route>
+		</scatter-gather>
+	</sub-flow>
+	<flow name="password-reset-implementationFlow" doc:id="b6e45a71-3b0f-4ae9-8092-b7c6b9344ff7" >
+		<set-variable value='#[now() &gt;&gt; "UTC"]' doc:name="Set Variable" doc:id="4b095370-1769-4f38-83fc-abcb60a1adb3" variableName="start"/>
+		<logger level="INFO" doc:name="Password Reset Start Logger" doc:id="fae7107c-cf26-4f90-b9ff-95c48d9821fc" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStamp: now() &gt;&gt; &quot;UTC&quot;,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Password reset process&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;START password reset process&quot;&#10;}]" />
+		<ee:transform doc:name="Transform Message" doc:id="35285d87-c6be-4fec-ba59-2edea0cfd165" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+import java!com::yoni::Hash
+---
+{
+  "email": vars.requestData.payload.email,
+  "password": Hash::hashPassword(vars.requestData.payload.newPassword)
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Password Resest Flow Reference" doc:id="fc0cfb3b-cfd6-43dd-a518-406104df9075" name="password-reset-subflow" />
+		<ee:transform doc:name="Transform Message" doc:id="e24b1c68-e8eb-49d1-94ef-e863be154a71" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"customersResponse" : {
+		"eventInstanceId" : vars.requestData.headers.'x-vio-transactionid',
+		"status" : "success"
+}
+}
+]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Pasword Reset End Logger" doc:id="37dd9dfe-fc34-4fbb-ad35-4fb05a5a618f" message="#[%dw 2.0&#10;output application/json indent = false&#10;---&#10;{&#10;    TimeStam: (now() &gt;&gt; &quot;UTC&quot;) [0 to 18],&#10;    TotalTime: now() &gt;&gt; &quot;UTC&quot;  - vars.start,&#10;    TransactionId: vars.requestData.headers.'x-vio-transactionid',&#10;    AppName: app.name,&#10;    FlowName: flow.name, &#10;    BusinessProcessName: &quot;Customer Registration&quot;,&#10;    Category: &quot;Customer&quot;,&#10;    OriginatingApplication: &quot;Process API&quot;,&#10;    DestinationApplication: &quot;Password reset process&quot;,&#10;    CustomerId: &quot;NA&quot;,&#10;    TxnState: &quot;END password reset process&quot;&#10;}]" />
+		<error-handler ref="global-errorError_Handler" />
+	</flow>
+</mule>

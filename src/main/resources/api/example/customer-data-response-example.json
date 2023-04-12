@@ -1,0 +1,21 @@
+[
+	{
+		"Name": "Ericka Hudson",
+		"firstName__c": "Ericka",
+		"lastName__c": "Hudson",
+		"countryCode__c": "+1",
+		"mobile__c": "9703414499",
+		"email__c": "denese.corkery@gmail.com",
+		"password__c": "JgeLTw03JkFkmSc0STsFHgUjk0tD/mIrzxNI/63Dd+M=",
+		"acceptDataPolicy__c": "true",
+		"recieveNews__c": "true",
+		"acceptPIC__c": "true",
+		"locale__c": "en",
+		"captchatoken__c": "d4190bdb35d1e7f194312144de32eb72e8eb6198",
+		"recieveClaimsettle__c": "true",
+		"contactType__c": "mobile",
+		"Id": "a013t00001NOWz3AAH",
+		"Id__c": "31",
+		"type": "CustomerONB__c"
+	}
+]

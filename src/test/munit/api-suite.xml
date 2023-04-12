@@ -1,0 +1,576 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:munit="http://www.mulesoft.org/schema/mule/munit" xmlns:munit-tools="http://www.mulesoft.org/schema/mule/munit-tools"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xsi:schemaLocation="
+		http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+		http://www.mulesoft.org/schema/mule/munit http://www.mulesoft.org/schema/mule/munit/current/mule-munit.xsd
+		http://www.mulesoft.org/schema/mule/munit-tools  http://www.mulesoft.org/schema/mule/munit-tools/current/mule-munit-tools.xsd">
+	<munit:config name="api-suite.xml" />
+	<munit:test name="api-main-test" doc:id="5b2a9472-1194-44a2-b398-05fc7d999a5e" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock APIkit Router" doc:id="d8c4cf9f-0caa-4263-9d6d-2635db84ba53" processor="apikit:router">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="37523bfe-2891-4eab-9678-3264def3c005" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://apimaintest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://apimaintest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="httpStatus" value="#[readUrl('classpath://apimaintest\mock_variable_1.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://apimaintest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="start" value="#[output application/java --- readUrl('classpath://apimaintest\mock_variable_3.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://apimaintest\mock_variable_4.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="acb05e4a-ba8c-489c-8c1b-68a34f63ccf9" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://apimaintest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://apimaintest\set-event_attributes.dwl')]" />
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to api-main" doc:id="aa190521-e32b-4b7c-bb8f-d5cdf8002967" name="api-main"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="44802f24-9907-41f9-87d3-dc75232ee412" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import apimaintest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\customers\registration:application\json:api-config-test" doc:id="814bf6de-c2ac-42e7-b3c1-4dcba7ac7ddd" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="9c51fe7e-9787-4728-8f60-87526fb3141e" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="eb345472-2b26-47b8-af4a-28d0b93b8e88" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="start" value="#[output application/java --- readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_variable_3.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="9489b176-9944-4fe7-8543-ba768c6b48a1" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="40e15daf-d333-423a-80e3-0ec6c6592ec9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_payload1.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_variable_4.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_variable_5.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\mock_variable_6.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="c75413cc-c10d-4a42-b83c-477bccbb6156" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postcustomersregistrationapplicationjsonapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\customers\registration:application\json:api-config" doc:id="36e5b748-1f97-4bd0-b264-600be9a9f898" name="post:\customers\registration:application\json:api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="91d49579-fbda-4e05-9712-72b60416349d" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postcustomersregistrationapplicationjsonapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify End Logger" doc:id="55869ef4-366f-4493-899d-1c1e3728ff05" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="72aea311-2ea0-4663-83cc-2a5a4c3a1765" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Start Logger" doc:id="5c938c27-36be-4f5a-ac68-e49d6fede1d6" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="8f337c90-cf2d-4e93-9337-12f7410d742a" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="registration-implementationFlow-test" doc:id="42ee9469-9d1b-4973-afa2-7e5a47259408" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Data Insert Salesforce DB Flow Reference" doc:id="e7c57f8d-005c-4ef7-9d60-8135b4af4f42" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ea23745b-025d-4745-8c79-2ba89b752952" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[readUrl('classpath://registrationimplementationFlowtest\mock_payload.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://registrationimplementationFlowtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://registrationimplementationFlowtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="start" value="#[output application/java --- readUrl('classpath://registrationimplementationFlowtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://registrationimplementationFlowtest\mock_variable_3.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="9406365e-fe1f-445c-beba-c44971718b02" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e4c35bbd-81c5-4f30-a0a0-19690c88abad" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="8024f9e8-ade4-4b4f-9aa5-5c61483284e5" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import registrationimplementationFlowtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="1146c394-86ff-4e0b-9fb9-79fbac4a5370" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import registrationimplementationFlowtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="271251d8-f9d3-41f7-88d1-d7e162a6089f" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a074b9bf-924a-40e4-ac13-cd3ab0258a51" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="b2ca403b-5042-491d-adcd-eb39d6a9675c" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import registrationimplementationFlowtest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="6682b235-2663-4dc5-bb7f-16ecd8a3a1a8" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import registrationimplementationFlowtest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="cf439723-0806-4fec-9a76-53cbd3fa7abe" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://registrationimplementationFlowtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://registrationimplementationFlowtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://registrationimplementationFlowtest\set-event_variable_.dwl')]" />
+					<munit:variable key="startTime" value="#[output application/java --- readUrl('classpath://registrationimplementationFlowtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+					<munit:variable key="requestData" value="#[output application/json --- readUrl('classpath://registrationimplementationFlowtest\set-event_variable_2.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to registration-implementationFlow" doc:id="a32c650f-fbd0-49f2-834c-8f9b6504b388" name="registration-implementationFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="56cd0bf4-d117-4fcb-95ee-3483e6cd01b2" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import registrationimplementationFlowtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Registration End Logger" doc:id="b267f358-e833-4414-9512-b05600d357ee" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ee398f7b-43a5-4592-b9f4-af1d373c7499" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Registration Start Logger" doc:id="57e13811-ecd6-4730-8b14-9b2a627776cc" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="7006b4dc-a0f9-47b3-b902-e3ec42635392" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="6cb03563-337e-475d-907e-3af46b9e0818" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="e4c35bbd-81c5-4f30-a0a0-19690c88abad" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="f9957dee-3db7-4b91-a82c-b0bd86e04642" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a074b9bf-924a-40e4-ac13-cd3ab0258a51" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="data-insert-salesforce-db-test" doc:id="a7aaf4f7-a224-4991-b244-f669696907c5" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Insert into DB" doc:id="5057d1b3-2c69-4e69-a9fa-89e6278730d0" processor="db:insert">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="baa9f310-2b30-433e-a93f-934470c92db8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java  --- readUrl('classpath://datainsertsalesforcedbtest\mock_payload.dwl')]" mediaType="application/java " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://datainsertsalesforcedbtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://datainsertsalesforcedbtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="start" value="#[output application/java --- readUrl('classpath://datainsertsalesforcedbtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://datainsertsalesforcedbtest\mock_variable_3.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Create" doc:id="8dd419a5-b8cc-49df-af8b-9a6a320fdb24" processor="salesforce:create">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="c3bd53ec-8fa8-4bcb-a7c8-8894f88d4a23" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java  --- readUrl('classpath://datainsertsalesforcedbtest\mock_payload1.dwl')]" mediaType="application/java " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://datainsertsalesforcedbtest\mock_variable_4.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://datainsertsalesforcedbtest\mock_variable_5.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="start" value="#[output application/java --- readUrl('classpath://datainsertsalesforcedbtest\mock_variable_6.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://datainsertsalesforcedbtest\mock_variable_7.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="34e8c107-40a3-46d0-b747-a0726d76b980" >
+				<munit:payload value="#[output application/java  --- readUrl('classpath://datainsertsalesforcedbtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/java " />
+				<munit:attributes value="#[readUrl('classpath://datainsertsalesforcedbtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://datainsertsalesforcedbtest\set-event_variable_.dwl')]" />
+					<munit:variable key="startTime" value="#[output application/java --- readUrl('classpath://datainsertsalesforcedbtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+					<munit:variable key="start" value="#[output application/java --- readUrl('classpath://datainsertsalesforcedbtest\set-event_variable_2.dwl')]" encoding="UTF-8" mediaType="application/java" />
+					<munit:variable key="requestData" value="#[output application/json --- readUrl('classpath://datainsertsalesforcedbtest\set-event_variable_3.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to data-insert-salesforce-db" doc:id="c18e1dfc-3193-4983-86bb-b207f7ae0f74" name="data-insert-salesforce-db"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="6e266f28-0be5-4905-942c-ca1ddac222b9" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import datainsertsalesforcedbtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify DB End Logger" doc:id="38381811-082c-42c6-b8db-6363fa645d91" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="14f88475-d902-4a2d-b3ca-8780c373ba4b" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify SFDC Response Logger" doc:id="36b2018e-b11d-4e32-8b6f-9f79d7299852" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a62e53de-35ac-463e-ab70-3cb73ef2477f" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify SFDC Request Logger" doc:id="c189f72d-7565-4379-87c3-db38290b8b02" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0914120c-3a63-4fa4-9606-bbbc93c36d47" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify DB Start Logger" doc:id="39f94f3f-aa06-41c4-96bb-9b655925e225" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0249bc38-859c-4d78-92c2-59fc71033544" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\notifications:application\json:api-config-test" doc:id="16b50cb0-d3cd-4196-9be3-05fe1dc05db4" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="9e3bdce1-3a91-46bd-a353-b8251ad54662" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="0ce93de5-79bb-4189-bc4c-f50e69237780" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_variable_2.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="c7d9d67f-547e-41f9-a66f-e66740245074" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="5fa83401-334b-4685-9022-9d0ea35cc972" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_payload1.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_attributes1.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_variable_3.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_variable_4.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="start" value="#[output application/java --- readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_variable_5.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\mock_variable_6.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="7bc10fc9-459e-44e5-8b88-ea362383a003" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postnotificationsapplicationjsonapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\notifications:application\json:api-config" doc:id="3f505f1c-f3c0-4432-8e0d-fc58664c8c17" name="post:\notifications:application\json:api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="c43d0fed-29cd-4a3d-897f-4a704eef2d7c" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postnotificationsapplicationjsonapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify Start Logger" doc:id="a3ba74d6-c568-48c9-9ad8-c9bfaedcf547" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f57dc13d-b13d-41c0-9321-9a6d6d580ba3" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify End Logger" doc:id="8dcf20ee-7578-463a-90b2-00cd7735d980" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="99138deb-6426-4091-b3f7-765308f89686" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="notification-implementationFlow-test" doc:id="94970333-c32a-4519-9701-c5bc73a1333a" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Send Email Notification" doc:id="de975b39-9f03-4543-8ad2-af594247ef3c" processor="email:send">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="395d49e7-60ba-468f-baee-57f4d02d0ae9" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://notificationimplementationFlowtest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://notificationimplementationFlowtest\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://notificationimplementationFlowtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://notificationimplementationFlowtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="start" value="#[output application/java --- readUrl('classpath://notificationimplementationFlowtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://notificationimplementationFlowtest\mock_variable_3.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="cf6dbe17-2561-4d03-b86f-4ee73fa4bd66" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="d9400b16-f7a4-4647-b026-adf834ae845d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="709a9651-16a3-4e0d-9487-c33271c15480" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import notificationimplementationFlowtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="3aef7e8e-1531-49ef-b909-36e3618eec4b" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import notificationimplementationFlowtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="442218e2-c724-4f47-ac7a-a0c2b8980cbb" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://notificationimplementationFlowtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://notificationimplementationFlowtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://notificationimplementationFlowtest\set-event_variable_.dwl')]" />
+					<munit:variable key="startTime" value="#[output application/java --- readUrl('classpath://notificationimplementationFlowtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+					<munit:variable key="requestData" value="#[output application/json --- readUrl('classpath://notificationimplementationFlowtest\set-event_variable_2.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to notification-implementationFlow" doc:id="453745f0-168a-4731-a768-aa3db7fc7d9a" name="notification-implementationFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="ac68a459-a37f-4a1a-b050-49133d4749e7" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import notificationimplementationFlowtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify SMTP End Logger" doc:id="f62fef9c-27ab-40a7-9727-681b0c50dc71" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="4efea4a8-55ac-4e9b-b167-10a770b41898" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify SMTP Start Logger" doc:id="995a357d-e5e8-496e-8f81-a97e96d37b0c" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="78d50df0-b577-42c2-a2dc-bdfd1df339b7" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="58cb8072-e38b-4e12-a9cd-1e74d43e0833" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="d9400b16-f7a4-4647-b026-adf834ae845d" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="post:\customers\login:application\json:api-config-test" doc:id="aff0a836-1700-4ab5-a297-3bf2173a88b2" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="abbac7bc-8c44-45f8-9a09-f547d693d265" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a5fd8d0f-bf84-414f-9c14-63ac829ebdc8" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_payload.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="start" value="#[output application/java --- readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_variable_3.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:mock-when doc:name="Mock Flow Reference" doc:id="dff5e025-b833-4100-ba99-d203993e9d56" processor="flow-ref">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="28649563-215b-4a7d-a1b2-17fdc6a7a987" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/json  --- readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_payload1.dwl')]" mediaType="application/json " encoding="UTF-8" />
+					<munit-tools:attributes value="#[readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_attributes.dwl')]" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_variable_4.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_variable_5.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\mock_variable_6.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit:set-event doc:name="Set Input" doc:id="4d92cd30-9ac1-4704-b99a-782f9dcc18fa" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://postcustomersloginapplicationjsonapiconfigtest\set-event_variable_.dwl')]" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to post:\customers\login:application\json:api-config" doc:id="c0a70697-c326-405f-bdf2-31ed33222370" name="post:\customers\login:application\json:api-config"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="b90e421a-037a-4b22-b1ad-b298392a7d5c" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import postcustomersloginapplicationjsonapiconfigtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify End Logger" doc:id="a55fc9e4-5ee5-4c4c-9088-88f1f06201aa" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="71f1c8fa-042e-4d91-b2fc-c661f3cdda93" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Start Logger" doc:id="ee00dcdf-d9b5-483b-a917-88318380c969" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ffe033e2-2cc6-41f1-97b9-c6d4ec9af6b4" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+	<munit:test name="login-implementationFlow-test" doc:id="32c52ac9-4de9-4f45-910d-0862d66fbf0b" >
+		<munit:behavior >
+			<munit-tools:mock-when doc:name="Mock Query" doc:id="56b2b250-0f0f-4a6c-adc8-a6d018d79f21" processor="salesforce:query">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="a9fdd85c-b385-452a-8d0e-81ec6f158a22" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:then-return >
+					<munit-tools:payload value="#[output application/java  --- readUrl('classpath://loginimplementationFlowtest\mock_payload.dwl')]" mediaType="application/java " encoding="UTF-8" />
+					<munit-tools:variables >
+						<munit-tools:variable key="outboundHeaders" value="#[readUrl('classpath://loginimplementationFlowtest\mock_variable_.dwl')]" />
+						<munit-tools:variable key="startTime" value="#[output application/java --- readUrl('classpath://loginimplementationFlowtest\mock_variable_1.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="start" value="#[output application/java --- readUrl('classpath://loginimplementationFlowtest\mock_variable_2.dwl')]" mediaType="application/java" encoding="UTF-8" />
+						<munit-tools:variable key="requestData" value="#[output application/json --- readUrl('classpath://loginimplementationFlowtest\mock_variable_3.dwl')]" mediaType="application/json" encoding="UTF-8" />
+					</munit-tools:variables>
+				</munit-tools:then-return>
+			</munit-tools:mock-when>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="6358aa55-de09-42c1-afa5-07eb8352d363" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f51e538d-2912-41b8-9824-65dbb26e13e4" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="04eae88b-3f43-4b6e-ba37-9094acf252f9" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import loginimplementationFlowtest::spy_assert_payload
+---
+spy_assert_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="7ba3d175-89a9-4902-8f7a-ac2196c125e4" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import loginimplementationFlowtest::spy_assert_payload1
+---
+spy_assert_payload1::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit-tools:spy doc:name="Spy Transform Message" doc:id="47c9980f-960e-42c7-bb20-3bfb1ef4e609" processor="ee:transform">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="47c9ff9d-9b0e-444c-88b4-ff1d43964821" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+				<munit-tools:before-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="39cec82a-cc20-41d0-843e-1b4221e31812" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import loginimplementationFlowtest::spy_assert_payload2
+---
+spy_assert_payload2::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:before-call>
+				<munit-tools:after-call >
+					<munit-tools:assert doc:name="Assert payload" doc:id="9acd8cdc-3845-41e9-9bd9-d8caae3d1c3d" message="The payload does not match">
+						<munit-tools:that ><![CDATA[#[%dw 2.0
+import loginimplementationFlowtest::spy_assert_payload3
+---
+spy_assert_payload3::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+					</munit-tools:assert>
+				</munit-tools:after-call>
+			</munit-tools:spy>
+			<munit:set-event doc:name="Set Input" doc:id="48f0425f-cdca-4a30-b839-289eba07c623" >
+				<munit:payload value="#[output application/json  --- readUrl('classpath://loginimplementationFlowtest\set-event_payload.dwl')]" encoding="UTF-8" mediaType="application/json " />
+				<munit:attributes value="#[readUrl('classpath://loginimplementationFlowtest\set-event_attributes.dwl')]" />
+				<munit:variables >
+					<munit:variable key="outboundHeaders" value="#[readUrl('classpath://loginimplementationFlowtest\set-event_variable_.dwl')]" />
+					<munit:variable key="startTime" value="#[output application/java --- readUrl('classpath://loginimplementationFlowtest\set-event_variable_1.dwl')]" encoding="UTF-8" mediaType="application/java" />
+					<munit:variable key="requestData" value="#[output application/json --- readUrl('classpath://loginimplementationFlowtest\set-event_variable_2.dwl')]" encoding="UTF-8" mediaType="application/json" />
+				</munit:variables>
+			</munit:set-event>
+		</munit:behavior>
+		<munit:execution >
+			<flow-ref doc:name="Flow-ref to login-implementationFlow" doc:id="a6ca9dca-d586-45af-ac29-efc0006908dc" name="login-implementationFlow"/>
+		</munit:execution>
+		<munit:validation >
+			<munit-tools:assert doc:name="Assert payload" doc:id="0561b90c-66d9-4990-9dd4-d07ae0c81d3a" message="The payload does not match">
+				<munit-tools:that ><![CDATA[#[%dw 2.0
+import loginimplementationFlowtest::assert_expression_payload
+---
+assert_expression_payload::main({payload: payload, attributes: attributes, vars: vars})]]]></munit-tools:that>
+			</munit-tools:assert>
+			<munit-tools:verify-call doc:name="Verify SFDC Request Logger" doc:id="c9798974-562b-4499-a355-2f4d1af84364" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="ab5e55ed-bdc1-48c0-86a9-782fdd5b7fbe" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify SFDC Response Logger" doc:id="d9922ea7-5889-41e5-833e-4af1ae140219" processor="logger" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="43f5ceef-b471-4527-8520-ac1938f106fb" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="e65dab46-51de-44ba-9850-b253a068ef5a" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="f51e538d-2912-41b8-9824-65dbb26e13e4" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+			<munit-tools:verify-call doc:name="Verify Transform Message" doc:id="5fe4a4fc-a74e-457d-92f1-07c78cb105c6" processor="ee:transform" times="1">
+				<munit-tools:with-attributes >
+					<munit-tools:with-attribute whereValue="47c9ff9d-9b0e-444c-88b4-ff1d43964821" attributeName="doc:id" />
+				</munit-tools:with-attributes>
+			</munit-tools:verify-call>
+		</munit:validation>
+	</munit:test>
+
+
+</mule>
