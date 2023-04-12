@@ -117,11 +117,7 @@
 			<artifactId>mongodb-driver-legacy</artifactId>
 			<version>4.0.4</version>
 		</dependency>
-		<dependency>
-			<groupId>com.mycompany</groupId>
-			<artifactId>postgresql-42.6.0</artifactId>
-			<version>0.1</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.mule.connectors</groupId>
 			<artifactId>mule-email-connector</artifactId>
