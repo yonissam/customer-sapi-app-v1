@@ -26,9 +26,6 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 		<salesforce:basic-connection username="${secure::sfdc.username}" password="${secure::sfdc.password}" securityToken="${secure::sfdc.token}" />
 	</salesforce:sfdc-config>
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="2961be16-1386-4384-9f25-1576102c9ede" file="properties/${mule.env}.yaml" key="${mule.secretKey}" />
-	<db:config name="Database_Config" doc:name="Database Config" doc:id="e6f9cd12-41be-4c55-a49c-953d6f30b5af" >
-		<db:generic-connection url="jdbc:postgresql://192.168.0.58:5432/Customers" driverClassName="org.postgresql.Driver" user="postgres" password="${secure::db.password}" />
-	</db:config>
 	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="c95e5556-3eb8-4c08-8ded-e4c9fdaa781a" >
 		<email:smtp-connection host="192.168.0.136" port="2525" />
 	</email:smtp-config>
@@ -40,6 +37,9 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 		<mongo:connection-string-connection connectionString="mongodb://root:example@192.168.0.136:27017/admin"/>
 	</mongo:config>
 	<api-gateway:autodiscovery apiId="18622546" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="ad83ee3c-e680-490a-9b55-a30d207b21f2" flowRef="api-main" />
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="1ed7c7ca-bc30-4ae3-9300-76b64df4ebfd" >
+		<db:generic-connection url=" jdbc:postgresql://192.168.0.58:5432/Customers" driverClassName="org.postgresql.Driver" user="postgres" password="${secure::db.password}"/>
+	</db:config>
 	
     
 </mule>
