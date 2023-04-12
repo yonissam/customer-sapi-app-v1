@@ -152,13 +152,7 @@
 			<version>6.3.7</version>
 			<classifier>mule-plugin</classifier>
 		</dependency>
-		<dependency>
-			<groupId>60bcfbbb-656e-419c-a121-5c3a72bbb760</groupId>
-			<artifactId>registration-sapi</artifactId>
-			<version>1.0.17</version>
-			<classifier>raml</classifier>
-			<type>zip</type>
-		</dependency>
+		
 		<dependency>
 			<groupId>com.mulesoft.connectors</groupId>
 			<artifactId>mule-salesforce-connector</artifactId>
