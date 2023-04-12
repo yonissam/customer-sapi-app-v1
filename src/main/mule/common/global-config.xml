@@ -38,7 +38,7 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 	</mongo:config>
 	<api-gateway:autodiscovery apiId="18622546" ignoreBasePath="true" doc:name="API Autodiscovery" doc:id="ad83ee3c-e680-490a-9b55-a30d207b21f2" flowRef="api-main" />
 	<db:config name="Database_Config" doc:name="Database Config" doc:id="1ed7c7ca-bc30-4ae3-9300-76b64df4ebfd" >
-		<db:generic-connection url=" jdbc:postgresql://192.168.0.58:5432/Customers" driverClassName="org.postgresql.Driver" user="postgres" password="${secure::db.password}"/>
+		<db:my-sql-connection host="192.168.0.58" port="3306" user="root" password="YoniGeo2024!" database="mulesoft" />
 	</db:config>
 	
     
