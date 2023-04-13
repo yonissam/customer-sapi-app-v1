@@ -27,7 +27,7 @@ http://www.mulesoft.org/schema/mule/api-gateway http://www.mulesoft.org/schema/m
 	</salesforce:sfdc-config>
 	<secure-properties:config name="Secure_Properties_Config" doc:name="Secure Properties Config" doc:id="2961be16-1386-4384-9f25-1576102c9ede" file="properties/${mule.env}.yaml" key="${mule.secretKey}" />
 	<email:smtp-config name="Email_SMTP" doc:name="Email SMTP" doc:id="c95e5556-3eb8-4c08-8ded-e4c9fdaa781a" >
-		<email:smtp-connection host="192.168.0.136" port="2525" />
+		<email:smtp-connection host="192.168.0.186" port="2525" />
 	</email:smtp-config>
 	<os:config name="ObjectStore_Config" doc:name="ObjectStore Config" doc:id="9fd23c40-466b-4065-a83a-efcdc554179a" >
 		<os:connection />
